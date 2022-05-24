@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react"
 
 
-function CreateForm({ BASEURL }) {
+function Create({ fetchAll, BASEURL }) {
 
     const [ok, setOk] = useState(false)
 
@@ -21,8 +21,8 @@ function CreateForm({ BASEURL }) {
             .then((response) => {
                 if (response.data.ok === "posted") {
                     setOk(true)
+                    fetchAll()
                 }
-                console.log(response.data)
             })
             .catch((error) => {
                 console.log('ERROR!! occurred in Backend.', error)
@@ -43,12 +43,12 @@ function CreateForm({ BASEURL }) {
     return (
         <form onSubmit={handleSubmit} className="create_form">
             <input ref={title} type="text" placeholder="タイトル" required />
-            <textarea ref={content} placeholder="内容" required></textarea>
+            <textarea ref={content} wrap="off" placeholder="内容" required />
             <button>新規入力</button>
             <button type="reset">クリア</button>
-            {ok ? "追加しました" : null}
+            <div className="result">{ok ? "追加しました" : ""}</div>
         </form>
     )
 }
 
-export default CreateForm
+export default Create
