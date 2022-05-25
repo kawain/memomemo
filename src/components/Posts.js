@@ -1,15 +1,13 @@
-
-// <div key={i} dangerouslySetInnerHTML={{ __html: v.title }} />
 import axios from 'axios'
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FiExternalLink, FiEdit, FiDelete } from "react-icons/fi";
 
-function Posts({ fetchAll, posts, BASEURL }) {
+function Posts({ fetchAll, posts, setPosts, BASEURL }) {
     const [id, setId] = useState("")
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
     const [mode, setMode] = useState(0)
-
+    const search = useRef(null)
 
     function selectOne(id, modeNo) {
         if (modeNo === 1) {
@@ -31,7 +29,7 @@ function Posts({ fetchAll, posts, BASEURL }) {
     function deleteOne(id) {
         let result = window.confirm("本当に削除していいですか？")
         if (result) {
-            axios.delete(`${BASEURL}`, { data: { id: id } })
+            axios.delete(`${BASEURL}index.php`, { data: { id: id } })
                 .then(res => {
                     if (res.data.ok === "deleted") {
                         fetchAll()
@@ -44,7 +42,6 @@ function Posts({ fetchAll, posts, BASEURL }) {
 
     function handleEdit(e) {
         e.preventDefault()
-
         const obj = {
             id: id,
             title: title,
@@ -63,11 +60,21 @@ function Posts({ fetchAll, posts, BASEURL }) {
             })
     }
 
+    function handleSearch(e) {
+        e.preventDefault()
+        axios.get(`${BASEURL}index.php?q=${search.current.value}`)
+            .then(res => {
+                setPosts(res.data)
+            }).catch(error => {
+                console.log(error)
+            })
+    }
+
 
     if (mode === 1) {
         return (
             <>
-                <h2>{id}:{title}</h2>
+                <h2>{id}: {title}</h2>
                 <pre>{content}</pre>
                 <div className='close'>
                     <button onClick={() => setMode(0)}>閉じる</button>
@@ -80,7 +87,7 @@ function Posts({ fetchAll, posts, BASEURL }) {
                 <form onSubmit={handleEdit} className="create_form">
                     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
                     <textarea wrap="off" value={content} onChange={(e) => setContent(e.target.value)} />
-                    <button>修正</button>
+                    <button>編集</button>
                 </form>
                 <div className='close'>
                     <button onClick={() => setMode(0)}>閉じる</button>
@@ -92,6 +99,9 @@ function Posts({ fetchAll, posts, BASEURL }) {
     return (
         <>
             <h2>一覧</h2>
+            <form className='search' onSubmit={handleSearch}>
+                <input ref={search} type="text" placeholder="検索" />
+            </form>
             <table className="list">
                 <thead>
                     <tr>

@@ -1,8 +1,8 @@
 <?php
 
-header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
+// header('Access-Control-Allow-Origin: *');
+// header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+// header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header('Content-Type: application/json');
 
 $pdo = new PDO('sqlite:posts.db');
@@ -21,6 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
         $stmt = $pdo->query('SELECT * FROM posts WHERE id=?;');
         $stmt->execute([$id]);
         $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+        print_json($rows);
+    } catch (Exception $e) {
+        print_json(['error' => $e->getMessage()]);
+    }
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['q'])) {
+    try {
+        $q = $_GET['q'];
+        $stmt = $pdo->query('SELECT * FROM posts WHERE title LIKE ? OR content LIKE ? ORDER BY id DESC;');
+        $stmt->execute(["%{$q}%", "%{$q}%"]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         print_json($rows);
     } catch (Exception $e) {
         print_json(['error' => $e->getMessage()]);

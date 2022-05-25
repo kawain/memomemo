@@ -1,23 +1,19 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react"
 
-
 function Create({ fetchAll, BASEURL }) {
-
     const [ok, setOk] = useState(false)
-
     const title = useRef(null)
     const content = useRef(null)
 
     function handleSubmit(e) {
         e.preventDefault()
-
         const obj = {
             title: title.current.value,
             content: content.current.value,
         }
 
-        axios.post(`${BASEURL}`, obj)
+        axios.post(`${BASEURL}index.php`, obj)
             .then((response) => {
                 if (response.data.ok === "posted") {
                     setOk(true)
@@ -25,7 +21,7 @@ function Create({ fetchAll, BASEURL }) {
                 }
             })
             .catch((error) => {
-                console.log('ERROR!! occurred in Backend.', error)
+                console.log(error)
             })
     }
 
