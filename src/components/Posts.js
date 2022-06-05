@@ -60,6 +60,13 @@ function Posts({ fetchAll, posts, setPosts, BASEURL }) {
             })
     }
 
+    function handleClose() {
+        setMode(0)
+        setId("")
+        setTitle("")
+        setContent("")
+    }
+
     function handleSearch(e) {
         e.preventDefault()
         axios.get(`${BASEURL}index.php?q=${search.current.value}`)
@@ -77,7 +84,7 @@ function Posts({ fetchAll, posts, setPosts, BASEURL }) {
                 <h2>{id}: {title}</h2>
                 <pre>{content}</pre>
                 <div className='close'>
-                    <button onClick={() => setMode(0)}>閉じる</button>
+                    <button onClick={handleClose}>閉じる</button>
                 </div>
             </>
         )
@@ -90,7 +97,7 @@ function Posts({ fetchAll, posts, setPosts, BASEURL }) {
                     <button>編集</button>
                 </form>
                 <div className='close'>
-                    <button onClick={() => setMode(0)}>閉じる</button>
+                    <button onClick={handleClose}>閉じる</button>
                 </div>
             </>
         )
